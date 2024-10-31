@@ -310,6 +310,8 @@ abstract class User extends Resource
 
                 new Panel('Documents & Tools', $this->getPlatformSpecificFields()),
 
+                HasMany::make('Orders'),
+
                 Boolean::make('Online', 'last_seen_at')
                     ->hideWhenUpdating()
                     ->hideFromIndex()

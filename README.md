@@ -30,35 +30,6 @@ public function getPlatformSpecificRelations(): array
         HasMany::make('Documents'),
 
         HasMany::make('Tool Contents'),
-
-        HasMany::make('Orders'),
-    ];
-}
-
-public function actions(NovaRequest $request): array
-{
-    return [
-        AddAntiplagiarismExtraChecks::make()
-            ->sole(),
-
-        AddAiWritingExtraTokens::make()
-            ->sole(),
-
-        AddAntiplagiarismExplicitText::make()
-            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismExplicitText))
-            ->sole(),
-
-        AddAntiplagiarismVeryLargeDocuments::make()
-            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismVeryLargeDocuments))
-            ->sole(),
-
-        AddAntiplagiarismIncreasedDocumentStorage::make()
-            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismIncreasedDocumentStorage))
-            ->sole(),
-
-        AddAntiplagiarismCompleteUrlAccess::make()
-            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismCompleteUrlAccess))
-            ->sole(),
     ];
 }
 ```
