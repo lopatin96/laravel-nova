@@ -47,7 +47,7 @@ abstract class User extends Resource
 
     public function fields(NovaRequest $request): array
     {
-        $this->getFields($request);
+        return $this->getFields($request);
     }
 
     protected function additionalSubscriptionsFields(): array
