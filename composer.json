@@ -1,0 +1,31 @@
+{
+  "name": "lopatin96/laravel-nova",
+  "description": "Laravel nova",
+  "autoload": {
+    "psr-4": {
+      "Atin\\LaravelNova\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "NovaProvider"
+      ]
+    }
+  },
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Vladyslav Lopatin",
+      "email": "ilopatin3@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "laravel/socialite": "^5.6"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^8.0"
+  }
+}
