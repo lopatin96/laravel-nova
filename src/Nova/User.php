@@ -353,6 +353,4 @@ abstract class User extends Resource
     abstract public function getPlatformSpecificFields(): array;
 
     abstract public function getPlatformSpecificRelations(): array;
-
-    abstract public function actions(NovaRequest $request): array;
 }
