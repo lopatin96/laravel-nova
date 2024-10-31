@@ -289,7 +289,7 @@ class UsersPerCountry extends Partition
                 'zm' => 'Zambia',
                 'zw' => 'Zimbabwe',
                 'ax' => 'Åland Islands',
-                default => 'None'
+                default => '—'
             })
             ->colors([
                 'ua' => '#ffdd00',

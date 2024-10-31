@@ -32,7 +32,7 @@ class UsersPerLocale extends Partition
                 'fr' => 'French',
                 'de' => 'German',
                 'tr' => 'Turkish',
-                default => 'None'
+                default => '—'
             })
             ->colors([
                 'en' => '#ef4444',
