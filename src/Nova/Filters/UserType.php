@@ -2,7 +2,7 @@
 
 namespace Atin\LaravelNova\Nova\Filters;
 
-use Atin\LaravelNova\Nova\Filters\Filter;
+use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class UserType extends Filter
