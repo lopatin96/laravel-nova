@@ -7,11 +7,16 @@ use Atin\LaravelNova\Nova\User as LaravelNovaUser;
 use Atin\LaravelCashierShop\Enums\OrderStatus;
 use Khalin\Fields\Indicator;
 use Illuminate\Support\Str;
+use Laravel\Nova\Fields\Text;
 
 class LaravelNovaHelper
 {
-    public static function getBillingShoppingStatusIndicator(User|LaravelNovaUser $user): Indicator
+    public static function getBillingShoppingStatusIndicator(User|LaravelNovaUser|null $user): Indicator|Text
     {
+        if (is_null($user)) {
+            return Text::make('');
+        }
+
         return Indicator::make(null, function ($user) {
             $billed = $user->subscribed;
             $shopped = $user->orders()->status(OrderStatus::Processed)->exists();
