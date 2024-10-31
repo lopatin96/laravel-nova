@@ -14,7 +14,7 @@ use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Marshmallow\Filters\DateRangeFilter;
 
-class Config extends Resource
+abstract class Config extends Resource
 {
     public static string $model = \Atin\LaravelConfigurator\Models\Config::class;
 
