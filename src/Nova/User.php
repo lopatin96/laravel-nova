@@ -135,23 +135,7 @@ abstract class User extends Resource
                 ID::make()
                     ->sortable(),
 
-                Stack::make('User', [
-                    Email::make('Email')
-                        ->onlyOnIndex()
-                        ->displayUsing(fn () => Str::limit($this->email, 20, '…'))
-                        ->sortable(),
-
-                    Indicator::make(null, function () {
-                        return $this->isOnline() ? 'Online ' : ($this->last_seen_at ? $this->last_seen_at->diffForHumans(short: true).' ' : 'Offline');
-                    })
-                        ->shouldHide('Offline')
-                        ->colors(['Online ' => 'green'])
-                        ->withoutLabels(),
-
-                    LaravelNovaHelper::getBillingShoppingStatusIndicator($this),
-                ])
-                    ->onlyOnIndex()
-                    ->sortable(),
+                LaravelNovaHelper::getUserField($this),
 
                 Email::make('Email')
                     ->hideFromIndex()

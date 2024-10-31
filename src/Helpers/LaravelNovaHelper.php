@@ -8,111 +8,161 @@ use Atin\LaravelCashierShop\Enums\OrderStatus;
 use Khalin\Fields\Indicator;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Stack;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Line;
 
 class LaravelNovaHelper
 {
-    public static function getBillingShoppingStatusIndicator(User|LaravelNovaUser|null $user): Indicator|Text
+    public static function getUserField(User|LaravelNovaUser|null $user): Stack
     {
-        if (is_null($user)) {
-            return Text::make('');
-        }
+        return Stack::make('User', [
+            BelongsTo::make('User')
+                ->peekable()
+                ->nullable()
+                ->readonly()
+                ->displayUsing(fn ($user) => Str::limit($user->name, 20, '…')),
 
-        return Indicator::make(null, function () use ($user) {
-            $billed = $user->subscribed;
-            $shopped = $user->orders()->status(OrderStatus::Processed)->exists();
+            Line::make(null, static function () use ($user) {
+                return $user?->email
+                    ? Str::limit($user->email, 20, '…')
+                    : ' ';
+            }),
 
-            if ($billed && $shopped) {
-                return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').') & Shopped';
-            }
+            Indicator::make(null, static function () use ($user) {
+                return $user?->isOnline()
+                    ? 'Online '
+                    : (
+                        $user?->last_seen_at
+                            ? $user->last_seen_at->diffForHumans(short: true).' '
+                            : 'Offline'
+                    );
+            })
+                ->shouldHide('Offline')
+                ->colors(['Online ' => 'green'])
+                ->withoutLabels(),
 
-            $billing = $user->billing_visited_at && $user->stripe_id;
-            $shopping = $user->orders()->status(OrderStatus::Incomplete)->exists();
+            Indicator::make(null, static function () use ($user) {
+                $billed = $user->subscribed;
+                $shopped = $user->orders()->status(OrderStatus::Processed)->exists();
 
-            if ($billed && $shopping) {
-                return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').') & Shopping';
-            }
+                if ($billed && $shopped) {
+                    return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').') & Shopped';
+                }
 
-            if ($billing && $shopped) {
-                return 'Billing & Shopped';
-            }
+                $billing = $user->billing_visited_at && $user->stripe_id;
+                $shopping = $user->orders()->status(OrderStatus::Incomplete)->exists();
 
-            $bill = $user->billing_visited_at;
-            $shop = $user->shop_visited_at;
+                if ($billed && $shopping) {
+                    return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').') & Shopping';
+                }
 
-            if ($billed && $shop) {
-                return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').') & Shop';
-            }
+                if ($billing && $shopped) {
+                    return 'Billing & Shopped';
+                }
 
-            if ($bill && $shopped) {
-                return 'Bill & Shopped';
-            }
+                $bill = $user->billing_visited_at;
+                $shop = $user->shop_visited_at;
 
-            if ($billed) {
-                return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').')';
-            }
+                if ($billed && $shop) {
+                    return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').') & Shop';
+                }
 
-            if ($shopped) {
-                return 'Shopped';
-            }
+                if ($bill && $shopped) {
+                    return 'Bill & Shopped';
+                }
 
-            if ($billing && $shopping) {
-                return 'Billing & Shopping';
-            }
+                if ($billed) {
+                    return 'Billed ('.$user->getSubscribedPlanName().' / '.Str::limit($user->getSubscribedPlanPriceType(), 1, '').')';
+                }
 
-            if ($billing && $shop) {
-                return 'Billing & Shop';
-            }
+                if ($shopped) {
+                    return 'Shopped';
+                }
 
-            if ($bill && $shopping) {
-                return 'Bill & Shopping';
-            }
+                if ($billing && $shopping) {
+                    return 'Billing & Shopping';
+                }
 
-            if ($billing) {
-                return 'Billing';
-            }
+                if ($billing && $shop) {
+                    return 'Billing & Shop';
+                }
 
-            if ($shopping) {
-                return 'Shopping';
-            }
+                if ($bill && $shopping) {
+                    return 'Bill & Shopping';
+                }
 
-            if ($bill && $shop) {
-                return 'Bill & Shop';
-            }
+                if ($billing) {
+                    return 'Billing';
+                }
 
-            if ($bill) {
-                return 'Bill';
-            }
+                if ($shopping) {
+                    return 'Shopping';
+                }
 
-            if ($shop) {
-                return 'Shop';
-            }
+                if ($bill && $shop) {
+                    return 'Bill & Shop';
+                }
 
-            return '';
-        })
-            ->shouldHide('')
-            ->colors([
-                'Shop' => 'yellow',
-                'Bill' => 'yellow',
-                'Bill & Shop' => 'yellow',
+                if ($bill) {
+                    return 'Bill';
+                }
 
-                'Shopping' => 'orange',
-                'Billing' => 'orange',
-                'Bill & Shopping' => 'orange',
-                'Billing & Shop' => 'orange',
-                'Billing & Shopping' => 'orange',
+                if ($shop) {
+                    return 'Shop';
+                }
 
-                'Shopped' => 'green',
-                'Billed (Pro / m)' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
-                'Billed (Pro / y)' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
-                'Bill & Shopped' => 'green',
-                'Billed (Pro / m) & Shop' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
-                'Billed (Pro / y) & Shop' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
-                'Billing & Shopped' => 'green',
-                'Billed (Pro / m) & Shopping' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
-                'Billed (Pro / y) & Shopping' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
-                'Billed (Pro / m) & Shopped' => $user->stripeSubscription?->ends_at ? 'purple' : 'black',
-                'Billed (Pro / y) & Shopped' => $user->stripeSubscription?->ends_at ? 'purple' : 'black',
-            ])
-            ->withoutLabels();
+                return '';
+            })
+                ->shouldHide('')
+                ->colors([
+                    'Shop' => 'yellow',
+                    'Bill' => 'yellow',
+                    'Bill & Shop' => 'yellow',
+
+                    'Shopping' => 'orange',
+                    'Billing' => 'orange',
+                    'Bill & Shopping' => 'orange',
+                    'Billing & Shop' => 'orange',
+                    'Billing & Shopping' => 'orange',
+
+                    'Shopped' => 'green',
+                    'Billed (Pro / m)' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
+                    'Billed (Pro / y)' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
+                    'Bill & Shopped' => 'green',
+                    'Billed (Pro / m) & Shop' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
+                    'Billed (Pro / y) & Shop' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
+                    'Billing & Shopped' => 'green',
+                    'Billed (Pro / m) & Shopping' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
+                    'Billed (Pro / y) & Shopping' => $user->stripeSubscription?->ends_at ? 'red' : 'green',
+                    'Billed (Pro / m) & Shopped' => $user->stripeSubscription?->ends_at ? 'purple' : 'black',
+                    'Billed (Pro / y) & Shopped' => $user->stripeSubscription?->ends_at ? 'purple' : 'black',
+                ])
+                ->withoutLabels(),
+
+            $user
+                ? Line::make(null, static function () use ($user) {
+                $result = '';
+
+                if ($user?->locale) {
+                    $result .= $result ? ' · '.$user->locale : $user->locale;
+                }
+
+                if ($user?->country) {
+                    $result .= $result ? ' · '.$user->country : $user->country;
+                }
+
+                return $result;
+            })
+                : Line::make(null, static fn () => ' '),
+
+            $user
+                ? Line::make(null, static function () use ($user) {
+                return "Created: {$user?->created_at->diffForHumans()}";
+            })
+                : Line::make(null, static fn () => ' '),
+
+        ])
+            ->sortable();
     }
 }

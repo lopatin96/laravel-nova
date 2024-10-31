@@ -33,53 +33,7 @@ class Order extends Resource
             ID::make()
                 ->sortable(),
 
-            Stack::make('User', [
-                BelongsTo::make('User')
-                    ->peekable()
-                    ->readonly()
-                    ->displayUsing(fn ($user) => Str::limit($user->name, 20, '…')),
-
-                Line::make(null, function () {
-                    return $this->user?->email
-                        ? Str::limit($this->user->email, 20, '…')
-                        : 'No email';
-                }),
-
-                Indicator::make(null, function () {
-                    return $this->user?->isOnline() ? 'Online ' : ($this->user?->last_seen_at ? $this->user->last_seen_at->diffForHumans(short: true).' ' : 'Offline');
-                })
-                    ->shouldHide('Offline')
-                    ->colors(['Online ' => 'green'])
-                    ->withoutLabels(),
-
-                LaravelNovaHelper::getBillingShoppingStatusIndicator($this->user),
-
-                Line::make(null, function () {
-                    $result = '';
-
-                    if ($this->user?->locale) {
-                        $result .= $result ? ' · '.$this->user->locale : $this->user->locale;
-                    }
-
-                    if ($this->user?->country) {
-                        $result .= $result ? ' · '.$this->user->country : $this->user->country;
-                    }
-
-                    return $result;
-                }),
-
-                Line::make(null, function () {
-                    $documents = \Illuminate\Support\Number::format($this->user?->documents->count() ?? 0);
-                    $toolContents = \Illuminate\Support\Number::format($this->user?->toolContents->count() ?? 0);
-
-                    return "D.: $documents; T.: $toolContents";
-                }),
-
-                Line::make(null, function () {
-                    return "Created: {$this->user?->created_at->diffForHumans()}";
-                }),
-            ])
-                ->sortable(),
+            LaravelNovaHelper::getUserField($this->user),
 
             BelongsTo::make('Product')
                 ->peekable()

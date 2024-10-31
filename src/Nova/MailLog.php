@@ -29,47 +29,7 @@ class MailLog extends Resource
             ID::make()
                 ->sortable(),
 
-            Stack::make('User', [
-                BelongsTo::make('User')
-                    ->peekable()
-                    ->nullable()
-                    ->readonly()
-                    ->displayUsing(fn ($user) => Str::limit($user->name, 20, '…')),
-
-                Line::make(null, function () {
-                    return $this->user?->email
-                        ? Str::limit($this->user->email, 20, '…')
-                        : 'No email';
-                }),
-
-                Indicator::make(null, function () {
-                    return $this->user?->isOnline() ? 'Online ' : ($this->user?->last_seen_at ? $this->user->last_seen_at->diffForHumans(short: true).' ' : 'Offline');
-                })
-                    ->shouldHide('Offline')
-                    ->colors(['Online ' => 'green'])
-                    ->withoutLabels(),
-
-                LaravelNovaHelper::getBillingShoppingStatusIndicator($this->user),
-
-                Line::make(null, function () {
-                    $result = '';
-
-                    if ($this->user?->locale) {
-                        $result .= $result ? ' · '.$this->user->locale : $this->user->locale;
-                    }
-
-                    if ($this->user?->country) {
-                        $result .= $result ? ' · '.$this->user->country : $this->user->country;
-                    }
-
-                    return $result;
-                }),
-
-                Line::make(null, function () {
-                    return "Created: {$this->user?->created_at->diffForHumans()}";
-                }),
-            ])
-                ->sortable(),
+            LaravelNovaHelper::getUserField($this->user),
 
             Text::make('Mail', 'mail_type')
                 ->readonly()
