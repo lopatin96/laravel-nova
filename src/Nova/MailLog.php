@@ -66,13 +66,6 @@ class MailLog extends Resource
                 }),
 
                 Line::make(null, function () {
-                    $documents = \Illuminate\Support\Number::format($this->user?->documents->count() ?? 0);
-                    $toolContents = \Illuminate\Support\Number::format($this->user?->toolContents->count() ?? 0);
-
-                    return "D.: $documents; T.: $toolContents";
-                }),
-
-                Line::make(null, function () {
                     return "Created: {$this->user?->created_at->diffForHumans()}";
                 }),
             ])
