@@ -12,3 +12,53 @@ public function getConfigCategories(): array
     ];
 }
 ```
+
+In User Resource you should implement `getPlatformSpecificFields()`, `getPlatformSpecificRelations`, `actions` methods. Example:
+```php
+public function getPlatformSpecificFields(): array
+{
+    return [
+        Number::make(__('D.'), fn (): string => \Illuminate\Support\Number::format($this->documents->count())),
+
+        Number::make(__('T.'), fn (): string => \Illuminate\Support\Number::format($this->toolContents->count())),
+    ];
+}
+
+public function getPlatformSpecificRelations(): array
+{
+    return [
+        HasMany::make('Documents'),
+
+        HasMany::make('Tool Contents'),
+
+        HasMany::make('Orders'),
+    ];
+}
+
+public function actions(NovaRequest $request): array
+{
+    return [
+        AddAntiplagiarismExtraChecks::make()
+            ->sole(),
+
+        AddAiWritingExtraTokens::make()
+            ->sole(),
+
+        AddAntiplagiarismExplicitText::make()
+            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismExplicitText))
+            ->sole(),
+
+        AddAntiplagiarismVeryLargeDocuments::make()
+            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismVeryLargeDocuments))
+            ->sole(),
+
+        AddAntiplagiarismIncreasedDocumentStorage::make()
+            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismIncreasedDocumentStorage))
+            ->sole(),
+
+        AddAntiplagiarismCompleteUrlAccess::make()
+            ->canSee(fn () => ! $this->getConfig(ConfigKey::AntiplagiarismCompleteUrlAccess))
+            ->sole(),
+    ];
+}
+```

@@ -31,7 +31,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 use Marshmallow\Filters\DateRangeFilter;
 
-class User extends Resource
+abstract class User extends Resource
 {
     public static string $model = \App\Models\User::class;
 
