@@ -89,5 +89,5 @@ abstract class Config extends Resource
         ];
     }
 
-    public abstract function getConfigCategories(): array;
+    abstract public function getConfigCategories(): array;
 }
