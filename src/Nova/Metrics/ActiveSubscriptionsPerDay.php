@@ -1,6 +1,6 @@
 <?php
 
-namespace Atin\LaravelNova\Nova\Filters;
+namespace Atin\LaravelNova\Nova\Metrics;
 
 use Atin\LaravelSubscription\Models\Subscription;
 use Laravel\Nova\Http\Requests\NovaRequest;
