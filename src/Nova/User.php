@@ -10,6 +10,7 @@ use App\Nova\Actions\AddAntiplagiarismExtraChecks;
 use App\Nova\Actions\AddAntiplagiarismIncreasedDocumentStorage;
 use App\Nova\Actions\AddAntiplagiarismVeryLargeDocuments;
 use Atin\LaravelCashierShop\Enums\OrderStatus;
+use Atin\LaravelNova\LaravelNovaHelper;
 use Atin\LaravelUserStatuses\Enums\UserStatus;
 use Atin\LaravelUserTypes\Enums\UserType;
 use Illuminate\Support\Str;
@@ -147,103 +148,7 @@ abstract class User extends Resource
                         ->colors(['Online ' => 'green'])
                         ->withoutLabels(),
 
-                    Indicator::make(null, function () {
-                        $billed = $this->subscribed;
-                        $shopped = $this->orders()->status(OrderStatus::Processed)->exists();
-
-                        if ($billed && $shopped) {
-                            return 'Billed ('.$this->getSubscribedPlanName().' / '.Str::limit($this->getSubscribedPlanPriceType(), 1, '').') & Shopped';
-                        }
-
-                        $billing = $this->billing_visited_at && $this->stripe_id;
-                        $shopping = $this->orders()->status(OrderStatus::Incomplete)->exists();
-
-                        if ($billed && $shopping) {
-                            return 'Billed ('.$this->getSubscribedPlanName().' / '.Str::limit($this->getSubscribedPlanPriceType(), 1, '').') & Shopping';
-                        }
-
-                        if ($billing && $shopped) {
-                            return 'Billing & Shopped';
-                        }
-
-                        $bill = $this->billing_visited_at;
-                        $shop = $this->shop_visited_at;
-
-                        if ($billed && $shop) {
-                            return 'Billed ('.$this->getSubscribedPlanName().' / '.Str::limit($this->getSubscribedPlanPriceType(), 1, '').') & Shop';
-                        }
-
-                        if ($bill && $shopped) {
-                            return 'Bill & Shopped';
-                        }
-
-                        if ($billed) {
-                            return 'Billed ('.$this->getSubscribedPlanName().' / '.Str::limit($this->getSubscribedPlanPriceType(), 1, '').')';
-                        }
-
-                        if ($shopped) {
-                            return 'Shopped';
-                        }
-
-                        if ($billing && $shopping) {
-                            return 'Billing & Shopping';
-                        }
-
-                        if ($billing && $shop) {
-                            return 'Billing & Shop';
-                        }
-
-                        if ($bill && $shopping) {
-                            return 'Bill & Shopping';
-                        }
-
-                        if ($billing) {
-                            return 'Billing';
-                        }
-
-                        if ($shopping) {
-                            return 'Shopping';
-                        }
-
-                        if ($bill && $shop) {
-                            return 'Bill & Shop';
-                        }
-
-                        if ($bill) {
-                            return 'Bill';
-                        }
-
-                        if ($shop) {
-                            return 'Shop';
-                        }
-
-                        return '';
-                    })
-                        ->shouldHide('')
-                        ->colors([
-                            'Shop' => 'yellow',
-                            'Bill' => 'yellow',
-                            'Bill & Shop' => 'yellow',
-
-                            'Shopping' => 'orange',
-                            'Billing' => 'orange',
-                            'Bill & Shopping' => 'orange',
-                            'Billing & Shop' => 'orange',
-                            'Billing & Shopping' => 'orange',
-
-                            'Shopped' => 'green',
-                            'Billed (Pro / m)' => $this->stripeSubscription?->ends_at ? 'red' : 'green',
-                            'Billed (Pro / y)' => $this->stripeSubscription?->ends_at ? 'red' : 'green',
-                            'Bill & Shopped' => 'green',
-                            'Billed (Pro / m) & Shop' => $this->stripeSubscription?->ends_at ? 'red' : 'green',
-                            'Billed (Pro / y) & Shop' => $this->stripeSubscription?->ends_at ? 'red' : 'green',
-                            'Billing & Shopped' => 'green',
-                            'Billed (Pro / m) & Shopping' => $this->stripeSubscription?->ends_at ? 'red' : 'green',
-                            'Billed (Pro / y) & Shopping' => $this->stripeSubscription?->ends_at ? 'red' : 'green',
-                            'Billed (Pro / m) & Shopped' => $this->stripeSubscription?->ends_at ? 'purple' : 'black',
-                            'Billed (Pro / y) & Shopped' => $this->stripeSubscription?->ends_at ? 'purple' : 'black',
-                        ])
-                        ->withoutLabels(),
+                    LaravelNovaHelper::getBillingShoppingStatusIndicator($this->user),
                 ])
                     ->onlyOnIndex()
                     ->sortable(),
