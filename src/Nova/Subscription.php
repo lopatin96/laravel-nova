@@ -4,7 +4,7 @@ namespace Atin\LaravelNova\Nova;
 
 use App\Models\User;
 use Atin\LaravelCashierShop\Enums\OrderStatus;
-use Atin\LaravelNova\LaravelNovaHelper;
+use Atin\LaravelNova\Helpers\LaravelNovaHelper;
 use Atin\LaravelSubscription\Models\Subscription as SubscriptionModel;
 use Illuminate\Support\Str;
 use Khalin\Fields\Indicator;

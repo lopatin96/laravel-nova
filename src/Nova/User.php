@@ -10,7 +10,7 @@ use App\Nova\Actions\AddAntiplagiarismExtraChecks;
 use App\Nova\Actions\AddAntiplagiarismIncreasedDocumentStorage;
 use App\Nova\Actions\AddAntiplagiarismVeryLargeDocuments;
 use Atin\LaravelCashierShop\Enums\OrderStatus;
-use Atin\LaravelNova\LaravelNovaHelper;
+use Atin\LaravelNova\Helpers\LaravelNovaHelper;
 use Atin\LaravelUserStatuses\Enums\UserStatus;
 use Atin\LaravelUserTypes\Enums\UserType;
 use Illuminate\Support\Str;

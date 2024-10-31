@@ -4,7 +4,7 @@ namespace Atin\LaravelNova\Nova;
 
 use Atin\LaravelCashierShop\Enums\OrderStatus;
 use Atin\LaravelCashierShop\Models\Order as OrderModel;
-use Atin\LaravelNova\LaravelNovaHelper;
+use Atin\LaravelNova\Helpers\LaravelNovaHelper;
 use Illuminate\Support\Str;
 use Khalin\Fields\Indicator;
 use Laravel\Nova\Fields\BelongsTo;
