@@ -22,7 +22,8 @@
     }
   ],
   "require": {
-    "php": ">=8.0"
+    "php": ">=8.0",
+    "marshmallow/nova-date-range-filter": "^2.0"
   },
   "require-dev": {
     "orchestra/testbench": "^8.0"
