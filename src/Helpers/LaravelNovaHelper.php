@@ -3,13 +3,14 @@
 namespace Atin\LaravelNova\Helpers;
 
 use App\Models\User;
+use Atin\LaravelNova\Nova\User as LaravelNovaUser;
 use Atin\LaravelCashierShop\Enums\OrderStatus;
 use Khalin\Fields\Indicator;
 use Illuminate\Support\Str;
 
 class LaravelNovaHelper
 {
-    public static function getBillingShoppingStatusIndicator(User $user): Indicator
+    public static function getBillingShoppingStatusIndicator(User|LaravelNovaUser $user): Indicator
     {
         return Indicator::make(null, function ($user) {
             $billed = $user->subscribed;

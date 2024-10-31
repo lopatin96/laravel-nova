@@ -148,7 +148,7 @@ abstract class User extends Resource
                         ->colors(['Online ' => 'green'])
                         ->withoutLabels(),
 
-                    LaravelNovaHelper::getBillingShoppingStatusIndicator($this->user),
+                    LaravelNovaHelper::getBillingShoppingStatusIndicator($this),
                 ])
                     ->onlyOnIndex()
                     ->sortable(),
