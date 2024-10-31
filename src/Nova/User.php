@@ -123,6 +123,7 @@ abstract class User extends Resource
             new Filters\UserStatus,
             new Filters\UserLocale,
             new Filters\UserCountry,
+            new Filters\UserDevice,
         ];
     }
 
