@@ -58,7 +58,11 @@ class LaravelNovaHelper
                     $result .= $result ? ' · '.$user->country : $user->country;
                 }
 
-                return $result;
+                if ($user?->device) {
+                    $result .= $result ? ' · '.$user->device : $user->device;
+                }
+
+                return Str::lower($result);
             })
                 : Line::make(null, static fn () => ' '),
 
