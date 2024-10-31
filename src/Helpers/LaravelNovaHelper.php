@@ -17,7 +17,7 @@ class LaravelNovaHelper
             return Text::make('');
         }
 
-        return Indicator::make(null, function ($user) {
+        return Indicator::make(null, function () use ($user) {
             $billed = $user->subscribed;
             $shopped = $user->orders()->status(OrderStatus::Processed)->exists();
 
