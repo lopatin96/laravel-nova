@@ -69,15 +69,6 @@ class Activitylog extends Resource
 
                 $this->user
                     ? Line::make(null, function () {
-                        $documents = \Illuminate\Support\Number::format($this->user->documents->count());
-                        $toolContents = \Illuminate\Support\Number::format($this->user->toolContents->count());
-
-                        return "D.: $documents; T.: $toolContents";
-                    })
-                    : Line::make(null, fn () => ' '),
-
-                $this->user
-                    ? Line::make(null, function () {
                         return "Created: {$this->user?->created_at->diffForHumans()}";
                     })
                     : Line::make(null, fn () => ' '),
