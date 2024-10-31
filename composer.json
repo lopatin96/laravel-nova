@@ -9,7 +9,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Atin\\LaravelSocialAuth\\NovaProvider"
+        "Atin\\LaravelNova\\NovaProvider"
       ]
     }
   },
