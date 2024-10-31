@@ -23,9 +23,18 @@
   ],
   "require": {
     "php": ">=8.0",
-    "marshmallow/nova-date-range-filter": "^2.0"
+    "marshmallow/nova-date-range-filter": "^2.0",
+    "khalin/nova4-indicator-field": "^1.0",
+    "pktharindu/nova-permissions": "^3.0",
+    "rhyslees/nova-impersonating-banner": "dev-redirect-to-resource-user"
   },
   "require-dev": {
     "orchestra/testbench": "^8.0"
+  },
+  "repositories": {
+    "nova-impersonating-banner": {
+      "type": "vcs",
+      "url": "https://github.com/lopatin96/nova-impersonating-banner"
+    }
   }
-}
+},
