@@ -39,13 +39,7 @@ abstract class Config extends Resource
                 ->sortable()
                 ->readonly(),
 
-            Select::make('Category')->options([
-                ConfigCategory::Platform->value => ConfigCategory::Platform->value,
-                ConfigCategory::Documents->value => ConfigCategory::Documents->value,
-                ConfigCategory::Analysis->value => ConfigCategory::Analysis->value,
-                ConfigCategory::Reports->value => ConfigCategory::Reports->value,
-                ConfigCategory::Tools->value => ConfigCategory::Tools->value,
-            ])
+            Select::make('Category')->options($this->getConfigCategories())
                 ->sortable(),
 
             Text::make('Title')
