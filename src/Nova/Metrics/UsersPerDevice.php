@@ -28,6 +28,7 @@ class UsersPerDevice extends Partition
                 'Desktop' => 'Desktop',
                 'Tablet' => 'Tablet',
                 'Mobile' => 'Mobile',
+                default => '—'
             })
             ->colors([
                 'Desktop' => '#3b82f6',
