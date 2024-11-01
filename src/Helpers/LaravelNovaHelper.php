@@ -62,6 +62,10 @@ class LaravelNovaHelper
                     $result .= $result ? ' · '.$user->device : $user->device;
                 }
 
+                if ($prompt = $user?->getNovaPrompt()) {
+                    $result .= $result ? " · T.: $prompt" : "T.: $prompt";
+                }
+
                 return Str::lower($result);
             })
                 : Line::make(null, static fn () => ' '),
