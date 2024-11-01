@@ -68,7 +68,7 @@ class LaravelNovaHelper
 
             $user
                 ? Line::make(null, static function () use ($user) {
-                return "Created: {$user?->created_at->diffForHumans()}";
+                return "Registered: {$user?->created_at->diffForHumans(short: true)}";
             })
                 : Line::make(null, static fn () => ' '),
 
