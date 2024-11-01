@@ -63,7 +63,7 @@ class LaravelNovaHelper
                 }
 
                 if ($prompt = $user?->getNovaPrompt()) {
-                    $result .= $result ? " · T.: $prompt" : "T.: $prompt";
+                    $result .= $result ? ' · '.$prompt : $prompt;
                 }
 
                 return Str::lower($result);
