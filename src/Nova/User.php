@@ -214,7 +214,7 @@ abstract class User extends Resource
 
                 new Panel('Additional Details', $this->additionalDetailsFields($request)),
 
-                new Panel('Documents & Tools', $this->getPlatformSpecificFields()),
+                new Panel('Platform-Specific Data', $this->getPlatformSpecificFields()),
 
                 HasMany::make('Orders'),
 
