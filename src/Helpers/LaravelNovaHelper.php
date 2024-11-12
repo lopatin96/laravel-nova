@@ -80,7 +80,7 @@ class LaravelNovaHelper
                 $result = "C: {$user?->created_at->diffForHumans(short: true)}";
 
                 if ($user->referrer_id) {
-                    $result .= $result ? ' (ref_id: #'.$user->referrer_id.')' : $user->locale;
+                    $result .= ' (ref. id: #'.Number::format($user->referrer_id).')';
                 }
 
                 return $result;
