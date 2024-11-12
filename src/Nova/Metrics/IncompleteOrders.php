@@ -24,25 +24,15 @@ class IncompleteOrders extends Partition
 
     public function calculate(NovaRequest $request): PartitionResult
     {
-        return $this->count($request, $this->query ? $this->query->where('user_id', '!=', 1)->where('status', OrderStatus::Incomplete) : Order::where('user_id', '!=', 1)->where('status', OrderStatus::Incomplete), 'product_id')
-            ->label(fn ($value) => match ($value) {
-                1 => '1 Extra Check',
-                2 => '10 Extra Checks',
-                3 => '100K Extra Tokens',
-                4 => '1M Extra Tokens',
-                5 => 'Explicit Text',
-                6 => 'Very Large Documents',
-                7 => 'Maximum Checking Speed',
-                8 => 'Increased Document Storage',
-                9 => 'Increased Simultaneous Checks',
-                10 => 'Maximum Generation Speed',
-                11 => 'Increased Simultaneous Generations',
-                12 => '5 Extra Checks',
-                13 => '1 Subscribed Extra Check',
-                14 => '5 Subscribed Extra Checks',
-                15 => '100 Extra Checks',
-                16 => 'Complete Url Access',
-                default => ucfirst($value)
-            });
+        $products = \Atin\LaravelCashierShop\Models\Product::all()->pluck('name', 'id')->toArray();
+
+        return $this->count(
+            $request,
+            $this->query
+                ? $this->query->where('user_id', '!=', 2)->where('status', OrderStatus::Incomplete)
+                : Order::where('user_id', '!=', 1)->where('status', OrderStatus::Incomplete),
+            'product_id'
+        )
+            ->label(fn ($value) => $products[$value] ?? ucfirst($value));
     }
 }
