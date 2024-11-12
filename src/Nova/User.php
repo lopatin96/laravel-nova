@@ -108,6 +108,7 @@ abstract class User extends Resource
 
             Number::make('Ref.', 'referrer_id')
                 ->nullable()
+                ->sortable()
                 ->onlyOnIndex(),
         ];
     }

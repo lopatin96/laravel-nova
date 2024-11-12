@@ -5,6 +5,7 @@ namespace Atin\LaravelNova\Helpers;
 use App\Models\User;
 use Atin\LaravelNova\Nova\User as LaravelNovaUser;
 use Atin\LaravelCashierShop\Enums\OrderStatus;
+use Illuminate\Support\Number;
 use Khalin\Fields\Indicator;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Text;
@@ -26,10 +27,10 @@ class LaravelNovaHelper
                 ->displayUsing(fn ($user) => Str::limit($user->name, 20, '…')),
 
             Line::make(null, static function () use ($user) {
-                $result = "#$user->id";
+                $result = '#' . Number::format($user->id);
 
                 if ($user?->email) {
-                    $result .= ' ' . Str::limit($user->email, 20, '…');
+                    $result .= ' · ' . Str::limit($user->email, 15, '…');
                 }
 
                 return $result;
