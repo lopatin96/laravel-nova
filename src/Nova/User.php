@@ -16,6 +16,7 @@ use Atin\LaravelUserTypes\Enums\UserType;
 use Illuminate\Support\Str;
 use Khalin\Fields\Indicator;
 use Laravel\Nova\Fields\Avatar;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
@@ -95,6 +96,19 @@ abstract class User extends Resource
 
             Text::make('Device')
                 ->nullable(),
+        ];
+    }
+
+    protected function referalFields(NovaRequest $request): array
+    {
+        return [
+            BelongsTo::make('Referrer', 'referrer', 'App\Nova\User')
+                ->nullable()
+                ->hideFromIndex(),
+
+            Number::make('Ref.', 'referrer_id')
+                ->nullable()
+                ->onlyOnIndex(),
         ];
     }
 
@@ -213,6 +227,8 @@ abstract class User extends Resource
                 new Panel('Subscription', $this->additionalSubscriptionsFields()),
 
                 new Panel('Additional Details', $this->additionalDetailsFields($request)),
+
+                new Panel('Referal', $this->referalFields($request)),
 
                 new Panel('Platform-Specific Data', $this->getPlatformSpecificFields()),
 

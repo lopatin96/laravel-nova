@@ -26,9 +26,13 @@ class LaravelNovaHelper
                 ->displayUsing(fn ($user) => Str::limit($user->name, 20, '…')),
 
             Line::make(null, static function () use ($user) {
-                return $user?->email
-                    ? Str::limit($user->email, 20, '…')
-                    : ' ';
+                $result = "#$user->id";
+
+                if ($user?->email) {
+                    $result .= ' ' . Str::limit($user->email, 20, '…');
+                }
+
+                return $result;
             }),
 
             Indicator::make(null, static function () use ($user) {
@@ -72,7 +76,13 @@ class LaravelNovaHelper
 
             $user
                 ? Line::make(null, static function () use ($user) {
-                return "Registered: {$user?->created_at->diffForHumans(short: true)}";
+                $result = "C: {$user?->created_at->diffForHumans(short: true)}";
+
+                if ($user->referrer_id) {
+                    $result .= $result ? ' (ref_id: #'.$user->referrer_id.')' : $user->locale;
+                }
+
+                return $result;
             })
                 : Line::make(null, static fn () => ' '),
 
