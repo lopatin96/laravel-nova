@@ -128,6 +128,7 @@ abstract class User extends Resource
         return [
             new Metrics\UsersPerDay,
             new Metrics\UsersPerCountry(query: $todayUsers, suffixName: 'Today'),
+            new Metrics\UsersPerDevice(query: $todayUsers, suffixName: 'Today'),
         ];
     }
 

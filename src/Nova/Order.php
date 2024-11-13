@@ -95,6 +95,7 @@ class Order extends Resource
             new Metrics\IncompleteOrders(query: $todayOrders),
             new Metrics\PaidOrdersPerLocale(query: $todayOrders),
             new Metrics\PaidOrdersPerCountry(query: $todayOrders),
+            new Metrics\PaidOrdersPerDevice(query: $todayOrders),
         ];
     }
 
