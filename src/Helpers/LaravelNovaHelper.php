@@ -27,7 +27,11 @@ class LaravelNovaHelper
                 ->displayUsing(fn ($user) => Str::limit($user->name, 20, '…')),
 
             Line::make(null, static function () use ($user) {
-                $result = '#' . Number::format($user->id);
+                $result = '';
+
+                if ($user) {
+                    $result = '#' . Number::format($user->id);
+                }
 
                 if ($user?->email) {
                     $result .= ' · ' . Str::limit($user->email, 15, '…');
