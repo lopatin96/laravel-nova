@@ -2,6 +2,7 @@
 
 namespace Atin\LaravelNova\Nova;
 
+use Atin\LaravelCashierShop\Enums\ProductStatus;
 use Atin\LaravelCashierShop\Models\Product as ProductModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -40,6 +41,10 @@ class Product extends Resource
 
             Text::make('Price Id')
                 ->hideFromIndex(),
+
+            Text::make('Tier')
+                ->displayUsing(fn ($tier) => Str::limit($tier, 10, '…'))
+                ->sortable(),
 
             Text::make('Category')
                 ->onlyOnIndex()
@@ -107,15 +112,23 @@ class Product extends Resource
         ];
     }
 
-    public function cards(NovaRequest $request): array
+    public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            (new Actions\DeployProduct)->canRun(function ($request, $model) {
+                return $model->status !== ProductStatus::Deployed;
+            }),
+            (new Actions\RetireProduct)->canRun(function ($request, $model) {
+                return $model->status !== ProductStatus::Retired;
+            }),
+        ];
     }
 
     public function filters(NovaRequest $request): array
     {
         return [
             new DateRangeFilter('created_at', 'Created Date'),
+            new Filters\ProductStatus,
         ];
     }
 
