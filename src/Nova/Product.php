@@ -62,6 +62,22 @@ class Product extends Resource
             Text::make('Name')
                 ->hideFromIndex(),
 
+            Image::make('Image')
+                ->disk('s3')
+                ->path('products/'.date('Y/m/d'))
+                ->thumbnail(function ($image) {
+                    return $image
+                        ? Storage::disk('s3')
+                            ->temporaryUrl($image, now()->addMinute())
+                        : null;
+                })
+                ->preview(function ($image) {
+                    return $image
+                        ? Storage::disk('s3')
+                            ->temporaryUrl($image, now()->addMinute())
+                        : null;
+                }),
+
             Text::make('Model')
                 ->hideFromIndex(),
 
