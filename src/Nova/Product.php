@@ -5,6 +5,7 @@ namespace Atin\LaravelNova\Nova;
 use Atin\LaravelCashierShop\Enums\ProductStatus;
 use Atin\LaravelCashierShop\Models\Product as ProductModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
