@@ -64,7 +64,7 @@ class Product extends Resource
 
             Image::make('Image')
                 ->disk('s3')
-                ->path('products/'.date('Y/m/d'))
+                ->path('products')
                 ->thumbnail(function ($image) {
                     return $image
                         ? Storage::disk('s3')
