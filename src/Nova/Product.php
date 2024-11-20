@@ -43,10 +43,6 @@ class Product extends Resource
             Text::make('Price Id')
                 ->hideFromIndex(),
 
-            Text::make('Tier')
-                ->displayUsing(fn ($tier) => Str::limit($tier, 10, '…'))
-                ->sortable(),
-
             Text::make('Category')
                 ->onlyOnIndex()
                 ->displayUsing(fn ($category) => Str::limit($category, 15, '…'))
