@@ -90,8 +90,9 @@ class Product extends Resource
             ])
                 ->onlyOnForms(),
 
-            KeyValue::make('Prices')
-                ->rules('json'),
+            Number::make('Base Price')
+                ->nullable()
+                ->sortable(),
 
             KeyValue::make('Properties')
                 ->rules('json'),
