@@ -41,9 +41,6 @@ class Product extends Resource
                 ->hideWhenCreating()
                 ->readonly(),
 
-            Text::make('Price Id')
-                ->hideFromIndex(),
-
             Text::make('Category')
                 ->onlyOnIndex()
                 ->displayUsing(fn ($category) => Str::limit($category, 15, '…'))
@@ -94,9 +91,6 @@ class Product extends Resource
                 ->onlyOnForms(),
 
             KeyValue::make('Prices')
-                ->rules('json'),
-
-            KeyValue::make('Crossed Prices')
                 ->rules('json'),
 
             KeyValue::make('Properties')
