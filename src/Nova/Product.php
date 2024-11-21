@@ -27,7 +27,7 @@ class Product extends Resource
     public static $title = 'hashid';
 
     public static $search = [
-        'id', 'hashid', 'price_id', 'name', 'model',
+        'id', 'hashid', 'category', 'name', 'model',
     ];
 
     public function fields(NovaRequest $request): array
