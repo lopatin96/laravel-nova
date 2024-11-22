@@ -59,12 +59,12 @@ class LaravelNovaHelper
                 ? Line::make(null, static function () use ($user) {
                 $result = '';
 
-                if ($user?->locale) {
-                    $result .= $result ? ' · '.$user->locale : $user->locale;
-                }
-
                 if ($user?->country) {
                     $result .= $result ? ' · '.$user->country : $user->country;
+                }
+
+                if ($user?->locale) {
+                    $result .= $result ? ' · '.$user->locale : $user->locale;
                 }
 
                 if ($user?->device) {
