@@ -57,38 +57,38 @@ class LaravelNovaHelper
 
             $user
                 ? Line::make(null, static function () use ($user) {
-                $result = '';
+                    $result = '';
 
-                if ($user?->country) {
-                    $result .= $result ? ' · '.$user->country : $user->country;
-                }
+                    if ($user?->country) {
+                        $result .= $result ? ' · '.$user->country : $user->country;
+                    }
 
-                if ($user?->locale) {
-                    $result .= $result ? ' · '.$user->locale : $user->locale;
-                }
+                    if ($user?->locale) {
+                        $result .= $result ? ' · '.$user->locale : $user->locale;
+                    }
 
-                if ($user?->device) {
-                    $result .= $result ? ' · '.$user->device : $user->device;
-                }
+                    if ($user?->device) {
+                        $result .= $result ? ' · '.$user->device : $user->device;
+                    }
 
-                if ($prompt = $user?->getNovaPrompt()) {
-                    $result .= $result ? ' · '.$prompt : $prompt;
-                }
+                    if ($prompt = $user?->getNovaPrompt()) {
+                        $result .= $result ? ' · '.$prompt : $prompt;
+                    }
 
-                return Str::lower($result);
-            })
+                    return Str::lower($result);
+                })
                 : Line::make(null, static fn () => ' '),
 
             $user
                 ? Line::make(null, static function () use ($user) {
-                $result = "C: {$user?->created_at->diffForHumans(short: true)}";
+                    $result = "C: {$user?->created_at->diffForHumans(short: true)}";
 
-                if ($user->referrer_id) {
-                    $result .= ' (ref. id: #'.Number::format($user->referrer_id).')';
-                }
+                    if ($user->referrer_id) {
+                        $result .= ' (ref. id: #'.Number::format($user->referrer_id).')';
+                    }
 
-                return $result;
-            })
+                    return $result;
+                })
                 : Line::make(null, static fn () => ' '),
 
         ])
