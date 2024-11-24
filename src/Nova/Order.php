@@ -40,10 +40,6 @@ class Order extends Resource
                 ->readonly()
                 ->displayUsing(fn ($product) => Str::limit($product->name, 32, '…')),
 
-            Number::make('Quantity')
-                ->sortable()
-                ->readonly(),
-
             Status::make('Status')
                 ->loadingWhen(['incomplete'])
                 ->failedWhen(['canceled'])
