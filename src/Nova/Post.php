@@ -78,8 +78,8 @@ class Post extends Resource
                         : null;
                 }),
 
-            Text::make('Feature')
-                ->sortable(),
+            Text::make('Image Alt')
+                ->hideFromIndex(),
 
             Text::make('Meta title')
                 ->hideFromIndex(),
@@ -88,6 +88,8 @@ class Post extends Resource
                 ->hideFromIndex(),
 
             Boolean::make('Published'),
+
+            Text::make('Geo'),
 
             Number::make('Views')
                 ->sortable()
