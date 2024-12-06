@@ -123,11 +123,11 @@ class Post extends Resource
 
     public function cards(NovaRequest $request): array
     {
-        $todayPosts = \Atin\LaravelBlog\Models\Post::where('created_at', '>=', now()->today());
+        $todayPosts = \Atin\LaravelBlog\Models\Post::where('created_at', '>=', now()->subDays(6));
 
         return [
             new Metrics\PostsPerDay,
-            new Metrics\PostsPerGeo(query: $todayPosts, suffixName: 'Today'),
+            new Metrics\PostsPerGeo(query: $todayPosts, suffixName: 'Last 7 days'),
         ];
     }
 
