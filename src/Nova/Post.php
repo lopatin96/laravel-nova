@@ -55,7 +55,11 @@ class Post extends Resource
 
             Text::make('Title')
                 ->sortable()
+                ->onlyOnIndex()
                 ->displayUsing(fn () => Str::limit($this->title, 32, '…')),
+
+            Text::make('Title')
+                ->hideFromIndex(),
 
             Text::make('Slug')
                 ->hideFromIndex(),
