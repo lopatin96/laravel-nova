@@ -4,6 +4,7 @@ namespace Atin\LaravelNova\Nova\Dashboards;
 
 use Atin\LaravelCashierShop\Models\Order;
 use App\Models\User;
+use Atin\LaravelNova\Nova\Metrics\RevenueByCountry;
 use Illuminate\Support\Facades\DB;
 use Atin\LaravelNova\Nova\Metrics\IncompleteOrders;
 use Atin\LaravelNova\Nova\Metrics\PaidOrders;
@@ -119,6 +120,104 @@ class OrderInsights extends Dashboard
                 ->groupBy('users.country');
         }
 
+        if (DB::getDriverName() === 'mysql') {
+            $todayRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->today())
+                ->whereDate('users.created_at', now()->today())
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+
+            $yesterdayRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->yesterday())
+                ->whereDate('users.created_at', now()->yesterday())
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+
+            $twoDaysAgoRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(2))
+                ->whereDate('users.created_at', now()->subDays(2))
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+
+            $threeDaysAgoRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(3))
+                ->whereDate('users.created_at', now()->subDays(3))
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+        } else {
+            $todayRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->today())
+                ->whereDate('users.created_at', now()->today())
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+
+            $yesterdayRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->yesterday())
+                ->whereDate('users.created_at', now()->yesterday())
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+
+            $twoDaysAgoRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(2))
+                ->whereDate('users.created_at', now()->subDays(2))
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+
+            $threeDaysAgoRevenueByCountry = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(3))
+                ->whereDate('users.created_at', now()->subDays(3))
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+        }
+
         return [
             new PaidOrders(query: $todayOrders, suffixName: 'Today'),
             new PaidOrders(query: $yesterdayOrders, suffixName: 'Yesterday'),
@@ -139,6 +238,11 @@ class OrderInsights extends Dashboard
             new UsersPurchasePercentage(query: $yesterdayUsersPurchasePercentage, suffixName: 'Yesterday'),
             new UsersPurchasePercentage(query: $twoDaysAgoUsersPurchasePercentage, suffixName: '2 Days ago'),
             new UsersPurchasePercentage(query: $threeDaysAgoUsersPurchasePercentage, suffixName: '3 Days ago'),
+
+            new RevenueByCountry(query: $todayRevenueByCountry, suffixName: 'Today'),
+            new RevenueByCountry(query: $yesterdayRevenueByCountry, suffixName: 'Yesterday'),
+            new RevenueByCountry(query: $twoDaysAgoRevenueByCountry, suffixName: '2 Days ago'),
+            new RevenueByCountry(query: $threeDaysAgoRevenueByCountry, suffixName: '3 Days ago'),
         ];
     }
 }
