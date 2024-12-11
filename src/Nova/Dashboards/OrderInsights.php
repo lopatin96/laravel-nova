@@ -332,10 +332,10 @@ class OrderInsights extends Dashboard
             new PaidOrdersPerCountry(query: $twoDaysAgoOrders, suffixName: '2 Days ago'),
             new PaidOrdersPerCountry(query: $threeDaysAgoOrders, suffixName: '3 Days ago'),
 
-            new UsersPurchasePercentage(query: $todayUsersPurchasePercentage, suffixName: 'Today'),
-            new UsersPurchasePercentage(query: $yesterdayUsersPurchasePercentage, suffixName: 'Yesterday'),
-            new UsersPurchasePercentage(query: $twoDaysAgoUsersPurchasePercentage, suffixName: '2 Days ago'),
-            new UsersPurchasePercentage(query: $threeDaysAgoUsersPurchasePercentage, suffixName: '3 Days ago'),
+            new UsersPurchasePercentage(query: $todayUsersPurchasePercentage, suffixName: '[users registered this day] Today'),
+            new UsersPurchasePercentage(query: $yesterdayUsersPurchasePercentage, suffixName: '[users registered that day] Yesterday'),
+            new UsersPurchasePercentage(query: $twoDaysAgoUsersPurchasePercentage, suffixName: '[users registered that day] 2 Days ago'),
+            new UsersPurchasePercentage(query: $threeDaysAgoUsersPurchasePercentage, suffixName: '[users registered that day] 3 Days ago'),
 
             new RevenueByCountry(query: $todayRevenueByCountryUsersRegisteredThisDay, suffixName: '[users registered this day] Today'),
             new RevenueByCountry(query: $yesterdayRevenueByCountryUsersRegisteredThatDay, suffixName: '[users registered that day] Yesterday'),

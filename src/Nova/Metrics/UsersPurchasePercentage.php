@@ -15,7 +15,7 @@ class UsersPurchasePercentage extends Partition
         parent::__construct($component);
 
         if ($suffixName) {
-            $this->name = Nova::humanize($this)." ($suffixName)";
+            $this->name = Nova::humanize($this)." [%] ($suffixName)";
         }
 
         $this->query = $query;
