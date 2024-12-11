@@ -33,3 +33,6 @@ public function getPlatformSpecificRelations(): array
     ];
 }
 ```
+
+### .env
+`GOOGLE_ADS_TARGET_CURRENCY=UAH`
