@@ -2,7 +2,6 @@
 
 namespace Atin\LaravelNova\Nova\Metrics;
 
-use Laravel\Nova\Metrics\Partition;
 use Laravel\Nova\Metrics\PartitionResult;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Illuminate\Database\Query\Builder;
