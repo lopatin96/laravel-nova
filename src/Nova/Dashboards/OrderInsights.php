@@ -36,7 +36,7 @@ class OrderInsights extends Dashboard
         if (DB::getDriverName() === 'mysql') {
             $todayUsersPurchasePercentage = User::select('users.country')
                 ->selectRaw('ROUND(
-                    COUNT(DISTINCT CASE WHEN orders.created_at >= CURDATE() THEN orders.user_id END) * 100.0
+                    COUNT(DISTINCT CASE WHEN orders.created_at >= CURDATE() AND orders.status = "processed" THEN orders.user_id END) * 100.0
                     / COUNT(DISTINCT CASE WHEN users.created_at >= CURDATE() THEN users.id END), 2
                 ) AS purchase_percentage')
                 ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
@@ -45,7 +45,7 @@ class OrderInsights extends Dashboard
 
             $yesterdayUsersPurchasePercentage = User::select('users.country')
                 ->selectRaw('ROUND(
-                    COUNT(DISTINCT CASE WHEN orders.created_at >= CURDATE() - INTERVAL 1 DAY AND orders.created_at < CURDATE() THEN orders.user_id END) * 100.0
+                    COUNT(DISTINCT CASE WHEN orders.created_at >= CURDATE() - INTERVAL 1 DAY AND orders.created_at < CURDATE() AND orders.status = "processed" THEN orders.user_id END) * 100.0
                     / COUNT(DISTINCT CASE WHEN users.created_at >= CURDATE() - INTERVAL 1 DAY AND users.created_at < CURDATE() THEN users.id END), 2
                 ) AS purchase_percentage')
                 ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
@@ -55,7 +55,7 @@ class OrderInsights extends Dashboard
 
             $twoDaysAgoUsersPurchasePercentage = User::select('users.country')
                 ->selectRaw('ROUND(
-                    COUNT(DISTINCT CASE WHEN orders.created_at >= CURDATE() - INTERVAL 2 DAY AND orders.created_at < CURDATE() - INTERVAL 1 DAY THEN orders.user_id END) * 100.0
+                    COUNT(DISTINCT CASE WHEN orders.created_at >= CURDATE() - INTERVAL 2 DAY AND orders.created_at < CURDATE() - INTERVAL 1 DAY AND orders.status = "processed" THEN orders.user_id END) * 100.0
                     / COUNT(DISTINCT CASE WHEN users.created_at >= CURDATE() - INTERVAL 2 DAY AND users.created_at < CURDATE() - INTERVAL 1 DAY THEN users.id END), 2
                 ) AS purchase_percentage')
                 ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
@@ -67,6 +67,7 @@ class OrderInsights extends Dashboard
                 ->selectRaw('ROUND(
                     COUNT(DISTINCT CASE WHEN orders.created_at >= CURDATE() - INTERVAL 3 DAY 
                                         AND orders.created_at < CURDATE() - INTERVAL 2 DAY 
+                                        AND orders.status = "processed"
                                         THEN orders.user_id END) * 100.0 
                     / COUNT(DISTINCT CASE WHEN users.created_at >= CURDATE() - INTERVAL 3 DAY 
                                         AND users.created_at < CURDATE() - INTERVAL 2 DAY 
@@ -80,7 +81,7 @@ class OrderInsights extends Dashboard
         } else {
             $todayUsersPurchasePercentage = User::select('users.country')
                 ->selectRaw('ROUND(
-                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now") THEN orders.user_id END) * 100.0 
+                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now") AND orders.status = "processed" THEN orders.user_id END) * 100.0 
                     / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now") THEN users.id END), 2
                 ) AS purchase_percentage')
                 ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
@@ -89,7 +90,7 @@ class OrderInsights extends Dashboard
 
             $yesterdayUsersPurchasePercentage = User::select('users.country')
                 ->selectRaw('ROUND(
-                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-1 day") AND orders.created_at < DATE("now") THEN orders.user_id END) * 100.0 
+                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-1 day") AND orders.created_at < DATE("now") AND orders.status = "processed" THEN orders.user_id END) * 100.0 
                     / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now", "-1 day") AND users.created_at < DATE("now") THEN users.id END), 2
                 ) AS purchase_percentage')
                 ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
@@ -99,7 +100,7 @@ class OrderInsights extends Dashboard
 
             $twoDaysAgoUsersPurchasePercentage = User::select('users.country')
                 ->selectRaw('ROUND(
-                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-2 day") AND orders.created_at < DATE("now", "-1 day") THEN orders.user_id END) * 100.0 
+                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-2 day") AND orders.created_at < DATE("now", "-1 day") AND orders.status = "processed" THEN orders.user_id END) * 100.0 
                     / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now", "-2 day") AND users.created_at < DATE("now", "-1 day") THEN users.id END), 2
                 ) AS purchase_percentage')
                 ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
@@ -109,7 +110,7 @@ class OrderInsights extends Dashboard
 
             $threeDaysAgoUsersPurchasePercentage = User::select('users.country')
                 ->selectRaw('ROUND(
-                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-3 day") AND orders.created_at < DATE("now", "-2 day") THEN orders.user_id END) * 100.0 
+                    COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-3 day") AND orders.created_at < DATE("now", "-2 day") AND orders.status = "processed" THEN orders.user_id END) * 100.0 
                     / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now", "-3 day") AND users.created_at < DATE("now", "-2 day") THEN users.id END), 2
                 ) AS purchase_percentage')
                 ->leftJoin('orders', 'users.id', '=', 'orders.user_id')

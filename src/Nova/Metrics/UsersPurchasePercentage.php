@@ -26,6 +26,10 @@ class UsersPurchasePercentage extends Partition
             return [$item->country => $item->purchase_percentage];
         });
 
-        return $this->result($percentages->toArray());
+        $filteredPercentages = $percentages->filter(function ($percentage) {
+            return $percentage > 0; // Оставляем только проценты больше 0
+        });
+
+        return $this->result($filteredPercentages->toArray());
     }
 }
