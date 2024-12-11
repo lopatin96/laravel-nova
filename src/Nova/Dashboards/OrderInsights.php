@@ -33,32 +33,43 @@ class OrderInsights extends Dashboard
         $threeDaysAgoOrders = Order::withTrashed()
             ->whereDate('created_at', now()->subDays(3));
 
-        $todayUsersPurchasePercentage = DB::table('users')
+        $todayUsersPurchasePercentage = User::select('users.country')
+            ->selectRaw('ROUND(
+                COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now") THEN orders.user_id END) * 100.0 
+                / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now") THEN users.id END), 2
+            ) AS purchase_percentage')
             ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
-            ->selectRaw('users.country, COUNT(DISTINCT orders.user_id) as users_with_orders, COUNT(users.id) as total_users')
-            ->whereDate('users.created_at', now()->today())
-            ->whereDate('orders.created_at', now()->today())
+            ->where('users.created_at', '>=', DB::raw('DATE("now")'))
             ->groupBy('users.country');
 
-        $yesterdayUsersPurchasePercentage = DB::table('users')
+        $yesterdayUsersPurchasePercentage = User::select('users.country')
+            ->selectRaw('ROUND(
+                COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-1 day") AND orders.created_at < DATE("now") THEN orders.user_id END) * 100.0 
+                / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now", "-1 day") AND users.created_at < DATE("now") THEN users.id END), 2
+            ) AS purchase_percentage')
             ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
-            ->selectRaw('users.country, COUNT(DISTINCT orders.user_id) as users_with_orders, COUNT(users.id) as total_users')
-            ->whereDate('users.created_at', now()->yesterday())
-            ->whereDate('orders.created_at', now()->yesterday())
+            ->where('users.created_at', '>=', DB::raw('DATE("now", "-1 day")'))
+            ->where('users.created_at', '<', DB::raw('DATE("now")'))
             ->groupBy('users.country');
 
-        $twoDaysAgoUsersPurchasePercentage = DB::table('users')
+        $twoDaysAgoUsersPurchasePercentage = User::select('users.country')
+            ->selectRaw('ROUND(
+                COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-2 day") AND orders.created_at < DATE("now", "-1 day") THEN orders.user_id END) * 100.0 
+                / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now", "-2 day") AND users.created_at < DATE("now", "-1 day") THEN users.id END), 2
+            ) AS purchase_percentage')
             ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
-            ->selectRaw('users.country, COUNT(DISTINCT orders.user_id) as users_with_orders, COUNT(users.id) as total_users')
-            ->whereDate('users.created_at', now()->subDays(2))
-            ->whereDate('orders.created_at', now()->subDays(2))
+            ->where('users.created_at', '>=', DB::raw('DATE("now", "-2 day")'))
+            ->where('users.created_at', '<', DB::raw('DATE("now", "-1 day")'))
             ->groupBy('users.country');
 
-        $threeDaysAgoUsersPurchasePercentage = DB::table('users')
+        $threeDaysAgoUsersPurchasePercentage = User::select('users.country')
+            ->selectRaw('ROUND(
+                COUNT(DISTINCT CASE WHEN orders.created_at >= DATE("now", "-3 day") AND orders.created_at < DATE("now", "-2 day") THEN orders.user_id END) * 100.0 
+                / COUNT(DISTINCT CASE WHEN users.created_at >= DATE("now", "-3 day") AND users.created_at < DATE("now", "-2 day") THEN users.id END), 2
+            ) AS purchase_percentage')
             ->leftJoin('orders', 'users.id', '=', 'orders.user_id')
-            ->selectRaw('users.country, COUNT(DISTINCT orders.user_id) as users_with_orders, COUNT(users.id) as total_users')
-            ->whereDate('users.created_at', now()->subDays(3))
-            ->whereDate('orders.created_at', now()->subDays(3))
+            ->where('users.created_at', '>=', DB::raw('DATE("now", "-3 day")'))
+            ->where('users.created_at', '<', DB::raw('DATE("now", "-2 day")'))
             ->groupBy('users.country');
 
         return [
