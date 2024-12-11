@@ -95,6 +95,7 @@ class Post extends Resource
 
             Text::make('Geo')
                 ->rules('max:5')
+                ->withMeta(['extraAttributes' => ['maxlength' => 5]])
                 ->help('Maximum 5 characters allowed.'),
 
             Number::make('Views')
