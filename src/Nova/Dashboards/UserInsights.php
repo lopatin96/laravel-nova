@@ -18,26 +18,26 @@ class UserInsights extends Dashboard
 
     public function cards(): array
     {
-        $lastHourUsers = User::where('created_at', '>=', now()->subHour());
-        $lastThreeHoursUsers = User::where('created_at', '>=', now()->subHours(3));
-        $todayUsers = User::where('created_at', '>=', now()->today());
-        $yesterdayUsers = User::where('created_at', '>=', now()->yesterday())->where('created_at', '<=', now()->today());
+        $todayUsers = User::whereDate('created_at', now()->today());
+        $yesterdayUsers = User::whereDate('created_at', now()->yesterday());
+        $twoDaysAgoUsers = User::whereDate('created_at', now()->subDays(2));
+        $threeDaysAgoUsers = User::whereDate('created_at', now()->subDays(3));
 
         return [
-            new UsersPerLocale(query: $lastHourUsers, suffixName: 'Last Hour'),
-            new UsersPerLocale(query: $lastThreeHoursUsers, suffixName: 'Last 3 Hours'),
             new UsersPerLocale(query: $todayUsers, suffixName: 'Today'),
             new UsersPerLocale(query: $yesterdayUsers, suffixName: 'Yesterday'),
+            new UsersPerLocale(query: $twoDaysAgoUsers, suffixName: '2 Days ago'),
+            new UsersPerLocale(query: $threeDaysAgoUsers, suffixName: '3 Days ago'),
 
-            new UsersPerCountry(query: $lastHourUsers, suffixName: 'Last Hour'),
-            new UsersPerCountry(query: $lastThreeHoursUsers, suffixName: 'Last 3 Hours'),
             new UsersPerCountry(query: $todayUsers, suffixName: 'Today'),
             new UsersPerCountry(query: $yesterdayUsers, suffixName: 'Yesterday'),
+            new UsersPerCountry(query: $twoDaysAgoUsers, suffixName: '2 Days ago'),
+            new UsersPerCountry(query: $threeDaysAgoUsers, suffixName: '3 Days ago'),
 
-            new UsersPerDevice(query: $lastHourUsers, suffixName: 'Last Hour'),
-            new UsersPerDevice(query: $lastThreeHoursUsers, suffixName: 'Last 3 Hours'),
             new UsersPerDevice(query: $todayUsers, suffixName: 'Today'),
             new UsersPerDevice(query: $yesterdayUsers, suffixName: 'Yesterday'),
+            new UsersPerDevice(query: $twoDaysAgoUsers, suffixName: '2 Days ago'),
+            new UsersPerDevice(query: $threeDaysAgoUsers, suffixName: '3 Days ago'),
         ];
     }
 }
