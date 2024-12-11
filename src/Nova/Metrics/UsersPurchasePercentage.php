@@ -2,6 +2,7 @@
 
 namespace Atin\LaravelNova\Nova\Metrics;
 
+use Atin\LaravelNova\Helpers\LaravelNovaHelper;
 use Laravel\Nova\Metrics\PartitionResult;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,6 +31,7 @@ class UsersPurchasePercentage extends Partition
             return $percentage > 0; // Оставляем только проценты больше 0
         });
 
-        return $this->result($filteredPercentages->toArray());
+        return $this->result($filteredPercentages->toArray())
+            ->colors(LaravelNovaHelper::getCountryColors());
     }
 }
