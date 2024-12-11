@@ -121,7 +121,7 @@ class OrderInsights extends Dashboard
         }
 
         if (DB::getDriverName() === 'mysql') {
-            $todayRevenueByCountry = DB::table('orders')
+            $todayRevenueByCountryUsersRegisteredThisDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -133,7 +133,7 @@ class OrderInsights extends Dashboard
                 ->whereDate('users.created_at', now()->today())
                 ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
 
-            $yesterdayRevenueByCountry = DB::table('orders')
+            $yesterdayRevenueByCountryUsersRegisteredThatDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -145,7 +145,7 @@ class OrderInsights extends Dashboard
                 ->whereDate('users.created_at', now()->yesterday())
                 ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
 
-            $twoDaysAgoRevenueByCountry = DB::table('orders')
+            $twoDaysAgoRevenueByCountryUsersRegisteredThatDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -157,7 +157,7 @@ class OrderInsights extends Dashboard
                 ->whereDate('users.created_at', now()->subDays(2))
                 ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
 
-            $threeDaysAgoRevenueByCountry = DB::table('orders')
+            $threeDaysAgoRevenueByCountryUsersRegisteredThatDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -169,7 +169,7 @@ class OrderInsights extends Dashboard
                 ->whereDate('users.created_at', now()->subDays(3))
                 ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
         } else {
-            $todayRevenueByCountry = DB::table('orders')
+            $todayRevenueByCountryUsersRegisteredThisDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -181,7 +181,7 @@ class OrderInsights extends Dashboard
                 ->whereDate('users.created_at', now()->today())
                 ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
 
-            $yesterdayRevenueByCountry = DB::table('orders')
+            $yesterdayRevenueByCountryUsersRegisteredThatDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -193,7 +193,7 @@ class OrderInsights extends Dashboard
                 ->whereDate('users.created_at', now()->yesterday())
                 ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
 
-            $twoDaysAgoRevenueByCountry = DB::table('orders')
+            $twoDaysAgoRevenueByCountryUsersRegisteredThatDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -205,7 +205,7 @@ class OrderInsights extends Dashboard
                 ->whereDate('users.created_at', now()->subDays(2))
                 ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
 
-            $threeDaysAgoRevenueByCountry = DB::table('orders')
+            $threeDaysAgoRevenueByCountryUsersRegisteredThatDay = DB::table('orders')
                 ->join('users', 'orders.user_id', '=', 'users.id')
                 ->select(
                     'users.country',
@@ -215,6 +215,104 @@ class OrderInsights extends Dashboard
                 ->where('orders.status', 'processed')
                 ->whereDate('orders.created_at', now()->subDays(3))
                 ->whereDate('users.created_at', now()->subDays(3))
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+        }
+
+        if (DB::getDriverName() === 'mysql') {
+            $todayRevenueByCountryUsersNotRegisteredThisDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->today())
+                ->whereDate('users.created_at', '!=', now()->today())
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+
+            $yesterdayRevenueByCountryUsersNotRegisteredThatDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->yesterday())
+                ->whereDate('users.created_at', '!=', now()->yesterday())
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+
+            $twoDaysAgoRevenueByCountryUsersNotRegisteredThatDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(2))
+                ->whereDate('users.created_at', '!=', now()->subDays(2))
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+
+            $threeDaysAgoRevenueByCountryUsersNotRegisteredThatDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency')) AS currency"),
+                    DB::raw("SUM(CAST(JSON_EXTRACT(orders.log, '$.amount') AS DECIMAL(10, 2))) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(3))
+                ->whereDate('users.created_at', '!=', now()->subDays(3))
+                ->groupBy('users.country', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(orders.log, '$.currency'))"));
+        } else {
+            $todayRevenueByCountryUsersNotRegisteredThisDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->today())
+                ->whereDate('users.created_at', '!=', now()->today())
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+
+            $yesterdayRevenueByCountryUsersNotRegisteredThatDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->yesterday())
+                ->whereDate('users.created_at', '!=', now()->yesterday())
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+
+            $twoDaysAgoRevenueByCountryUsersNotRegisteredThatDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(2))
+                ->whereDate('users.created_at', '!=', now()->subDays(2))
+                ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
+
+            $threeDaysAgoRevenueByCountryUsersNotRegisteredThatDay = DB::table('orders')
+                ->join('users', 'orders.user_id', '=', 'users.id')
+                ->select(
+                    'users.country',
+                    DB::raw("json_extract(orders.log, '$.currency') AS currency"),
+                    DB::raw("SUM(CAST(json_extract(orders.log, '$.amount') AS REAL)) AS total_amount")
+                )
+                ->where('orders.status', 'processed')
+                ->whereDate('orders.created_at', now()->subDays(3))
+                ->whereDate('users.created_at', '!=', now()->subDays(3))
                 ->groupBy('users.country', DB::raw("json_extract(orders.log, '$.currency')"));
         }
 
@@ -239,10 +337,15 @@ class OrderInsights extends Dashboard
             new UsersPurchasePercentage(query: $twoDaysAgoUsersPurchasePercentage, suffixName: '2 Days ago'),
             new UsersPurchasePercentage(query: $threeDaysAgoUsersPurchasePercentage, suffixName: '3 Days ago'),
 
-            new RevenueByCountry(query: $todayRevenueByCountry, suffixName: 'Today'),
-            new RevenueByCountry(query: $yesterdayRevenueByCountry, suffixName: 'Yesterday'),
-            new RevenueByCountry(query: $twoDaysAgoRevenueByCountry, suffixName: '2 Days ago'),
-            new RevenueByCountry(query: $threeDaysAgoRevenueByCountry, suffixName: '3 Days ago'),
+            new RevenueByCountry(query: $todayRevenueByCountryUsersRegisteredThisDay, suffixName: '[users registered this day] Today'),
+            new RevenueByCountry(query: $yesterdayRevenueByCountryUsersRegisteredThatDay, suffixName: '[users registered that day] Yesterday'),
+            new RevenueByCountry(query: $twoDaysAgoRevenueByCountryUsersRegisteredThatDay, suffixName: '[users registered that day] 2 Days ago'),
+            new RevenueByCountry(query: $threeDaysAgoRevenueByCountryUsersRegisteredThatDay, suffixName: '[users registered that day] 3 Days ago'),
+
+            new RevenueByCountry(query: $todayRevenueByCountryUsersNotRegisteredThisDay, suffixName: '[users NOT registered this day] Today'),
+            new RevenueByCountry(query: $yesterdayRevenueByCountryUsersNotRegisteredThatDay, suffixName: '[users NOT registered that day] Yesterday'),
+            new RevenueByCountry(query: $twoDaysAgoRevenueByCountryUsersNotRegisteredThatDay, suffixName: '[users NOT registered that day] 2 Days ago'),
+            new RevenueByCountry(query: $threeDaysAgoRevenueByCountryUsersNotRegisteredThatDay, suffixName: '[users NOT registered that day] 3 Days ago'),
         ];
     }
 }
