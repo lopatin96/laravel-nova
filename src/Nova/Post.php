@@ -93,7 +93,9 @@ class Post extends Resource
 
             Boolean::make('Published'),
 
-            Text::make('Geo'),
+            Text::make('Geo')
+                ->rules('max:5')
+                ->help('Maximum 5 characters allowed.'),
 
             Number::make('Views')
                 ->sortable()
